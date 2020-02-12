@@ -1,7 +1,15 @@
-import React, { useState } from 'react';
-import PropTypes from 'prop-types';
+import React, { useState, useContext } from 'react';
 
-const Search = ({ setAlert, searchUsers, showClear, clearUser }) => {
+import GithubContext from '../../context/github/githubContext';
+import AlertContext from '../../context/alert/alertContext';
+
+const Search = () => {
+
+  const githubContext = useContext(GithubContext);
+  const { searchUsers, users, clearUsers } = githubContext;
+
+  const alertContext = useContext(AlertContext);
+
   const [text, setText] = useState('');
 
   const onChange = e => setText(e.target.value);
@@ -9,7 +17,7 @@ const Search = ({ setAlert, searchUsers, showClear, clearUser }) => {
   const onSubmit = e => {
     e.preventDefault();
     if (text === '') {
-      setAlert('Please enter something', 'light');
+      alertContext.setAlert('Please enter something', 'light');
     } else {
       searchUsers(text);
       setText('');
@@ -21,19 +29,12 @@ const Search = ({ setAlert, searchUsers, showClear, clearUser }) => {
       <form onSubmit={onSubmit} className='form'>
         <input type='text' name='text' placeholder='Search Users...' value={text} onChange={onChange} />
         <input type='submit' value='Search' className='btn btn-dark btn-block' />
-        {showClear && (
-          <button className='btn btn-light btn-block' onClick={clearUser}>Clear</button>
+        {users.length > 0 && (
+          <button className='btn btn-light btn-block' onClick={clearUsers}>Clear</button>
         )}
       </form>
     </div>
   );
-};
-
-Search.propTypes = {
-  searchUsers: PropTypes.func.isRequired,
-  clearUser: PropTypes.func.isRequired,
-  showClear: PropTypes.bool.isRequired,
-  setAlert: PropTypes.func.isRequired
 };
 
 export default Search;
